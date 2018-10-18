@@ -34,6 +34,7 @@ EMBEDDING_SIZE = 1024
 BATCH_SIZE = 16
 MAX_EPOCHS = 100
 VALIDATION_SPLIT = 0.2
+POSSIBLE_MODEL_TYPES = {'crf': 1, 'bilstm': 2, 'bilstm-crf': 3, 'random': 0}
 
 
 def load_document(tokens_file_name: str, spans_file_name: str,
@@ -446,12 +447,13 @@ def select_best_model(X: np.ndarray, y: np.ndarray, cv: List[Tuple[np.ndarray, n
         f1_cv = np.array(f1_macro, dtype=np.float32).mean()
         return -f1_cv
 
-    if os.path.isfile(model_name):
+    if os.path.isfile(model_name + '.json') and os.path.isfile(model_name + '.h5py'):
         with codecs.open(model_name + '.json', encoding='utf-8', errors='ignore', mode='r') as fp:
             json_data = fp.read()
         nn_model = model_from_json(json_data)
         nn_model.load_weights(model_name + '.h5py')
         factrueval_logger.info('A neural network model has been loaded from the file `{0}`.'.format(model_name))
+        return nn_model
     tmp_file_name = get_temp_name()
     try:
         best = gp_minimize(
@@ -599,10 +601,9 @@ def test_best_model(prediction_dir_name: str, nn_model: Union[Sequential, None],
                     ne_token_start = cur_ne[1][0]
                     ne_token_end = cur_ne[1][1] - 1
                     ne_char_start = text_info[ne_token_start][0]
-                    ne_char_end = text_info[ne_token_end][0] + text_info[ne_token_end][1]
-                    fp.write('{0} {1} {2}\n'.format(ne_class,ne_char_start, ne_char_end))
+                    ne_char_size = text_info[ne_token_end][1]
+                    fp.write('{0} {1} {2}\n'.format(ne_class, ne_char_start, ne_char_size))
                 sample_idx += 1
-                fp.write('\n')
 
 
 def main():
@@ -632,15 +633,8 @@ def main():
     if len(data_dir) > 0:
         assert os.path.isdir(data_dir), 'The directory `{0}` does not exist!'.format(data_dir)
     model_type = args.model_type
-    assert model_type in {'crf', 'bilstm', 'bilstm-crf', 'random'}, '`{0}` is unknown model type!'.format(model_type)
-    if  model_type == 'crf':
-        model_type = 1
-    elif model_type == 'bilstm':
-        model_type = 2
-    elif model_type == 'bilstm-crf':
-        model_type = 3
-    else:
-        model_type = 0
+    assert model_type in POSSIBLE_MODEL_TYPES, '`{0}` is unknown model type!'.format(model_type)
+    model_type = POSSIBLE_MODEL_TYPES[model_type]
     n_calls = args.number_of_calls
     assert n_calls > 10, 'The total number of evaluations must be a positive integer value greater than 10!'
     train_data_dir = os.path.join(os.path.dirname(__file__), '..', 'devset')
