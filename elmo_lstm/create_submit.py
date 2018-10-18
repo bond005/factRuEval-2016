@@ -593,7 +593,7 @@ def test_best_model(prediction_dir_name: str, nn_model: Union[Sequential, None],
             base_name = base_name[:point_pos].strip()
         if len(base_name) == 0:
             raise ValueError('The name `{0}` is wrong!'.format(base_name))
-        full_name = os.path.join(prediction_dir_name, base_name + '.track1')
+        full_name = os.path.join(prediction_dir_name, base_name + '.task1')
         with codecs.open(full_name, mode='w', encoding='utf-8', errors='ignore') as fp:
             for text_info in doc[1]:
                 for cur_ne in token_bounds_of_names_entities[sample_idx]:
@@ -601,8 +601,8 @@ def test_best_model(prediction_dir_name: str, nn_model: Union[Sequential, None],
                     ne_token_start = cur_ne[1][0]
                     ne_token_end = cur_ne[1][1] - 1
                     ne_char_start = text_info[ne_token_start][0]
-                    ne_char_size = text_info[ne_token_end][1]
-                    fp.write('{0} {1} {2}\n'.format(ne_class, ne_char_start, ne_char_size))
+                    ne_char_end = text_info[ne_token_end][0] + text_info[ne_token_end][1]
+                    fp.write('{0} {1} {2}\n'.format(ne_class.lower(), ne_char_start, ne_char_end - ne_char_start))
                 sample_idx += 1
 
 
