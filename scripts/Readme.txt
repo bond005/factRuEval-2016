@@ -6,7 +6,7 @@ To run the scripts you'll need a python 3 distribution, and, in some cases,
 some additional packages (see below).
 
 Please make sure that your submission files are in utf-8 without BOM, are located
-in a separate folder. The submission should have a .trackX file for every set of
+in a separate folder. The submission should have a .taskX file for every set of
 'book_YY' documents. Empty files are accepted by the evaluation script, but extra
 or missing files will result in warnings
 
