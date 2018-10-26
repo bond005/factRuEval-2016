@@ -450,7 +450,7 @@ def select_best_model(X: np.ndarray, y: np.ndarray, cv: List[Tuple[np.ndarray, n
     if os.path.isfile(model_name + '.json') and os.path.isfile(model_name + '.h5py'):
         with codecs.open(model_name + '.json', encoding='utf-8', errors='ignore', mode='r') as fp:
             json_data = fp.read()
-        nn_model = model_from_json(json_data)
+        nn_model = model_from_json(json_data, custom_objects={'CRF': CRF})
         nn_model.load_weights(model_name + '.h5py')
         factrueval_logger.info('A neural network model has been loaded from the file `{0}`.'.format(model_name))
         return nn_model
