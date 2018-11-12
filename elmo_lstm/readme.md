@@ -12,4 +12,4 @@ Example of using:
 python create_submit.py -m model/lstm -d cached_data/data -r /path/to/directory/with/submit/results -t bilstm -n 100
 ```
 
-F1-measure with DeepPavlov ELMO embeddings for the Russian language and simple bidirectional LSTM network (number of neurons in the LSTM layer is 512, dropout is 0.7, recurrent dropout is 0.0) is 88,47%.
+F1-measure with DeepPavlov ELMO embeddings for the Russian language and simple bidirectional LSTM network (number of neurons in the LSTM layer is 512, dropout is 0.7, recurrent dropout is 0.0) is 88,47%. And if we use more simpler model, CRF, with these ELMo, then our F1-score increases to 89,01%
