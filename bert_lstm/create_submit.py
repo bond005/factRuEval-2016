@@ -383,6 +383,8 @@ def texts_to_X(texts: List[List[str]], max_sentence_length: int, data_name: str,
                             X[text_idx][token_idx] = embeddings_of_texts_as_numpy[idx][token_start:token_end].max(
                                 axis=0)
                     del embeddings_of_texts_as_numpy
+                for k in list(sess.graph.get_all_collection_keys()):
+                    sess.graph.clear_collection(k)
         with open(data_name, mode='wb') as fp:
             pickle.dump(X, fp, protocol=2)
         tf.reset_default_graph()
