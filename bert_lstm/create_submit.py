@@ -690,8 +690,10 @@ def main():
                         help='The type of used model (CRF, BiLSTM, hybrid BiLSTM-CRF or random labeling).')
     parser.add_argument('-n', '--n_calls', dest='number_of_calls', type=int, required=False, default=50,
                         help='The total number of evaluations.')
+    parser.add_argument('-b', '--bert', dest='path_to_bert', type=str, required=True, help='Path to the BERT model.')
     args = parser.parse_args()
 
+    path_to_bert = args.path_to_bert
     result_directory_name = os.path.normpath(args.res_dir_name)
     assert os.path.isdir(result_directory_name), 'The directory `{0}` does not exist!'.format(result_directory_name)
     model_name = os.path.join(args.model_name)
@@ -717,9 +719,11 @@ def main():
         test_best_model(result_directory_name, None, max_sentence_length, None, texts_for_testing,
                         texts_and_token_bounds_for_testing)
     else:
-        X_train = texts_to_X(texts_for_training, max_sentence_length, data_name=(data_name + '.X_train'))
+        X_train = texts_to_X(texts_for_training, max_sentence_length, data_name=(data_name + '.X_train'),
+                             path_to_bert=path_to_bert)
         y_train = labels_to_y(labels_for_training, max_sentence_length, data_name=(data_name + '.y_train'))
-        X_test = texts_to_X(texts_for_testing, max_sentence_length, data_name=(data_name + '.X_test'))
+        X_test = texts_to_X(texts_for_testing, max_sentence_length, data_name=(data_name + '.X_test'),
+                            path_to_bert=path_to_bert)
         factrueval_logger.info('Data for training and testing have been prepared...')
         cv = [(train_index, test_index) for train_index, test_index in KFold(n_splits=3, shuffle=True).split(X_train)]
         best_nn_model = select_best_model(X_train, y_train, cv, max_sentence_length, model_type, model_name, n_calls)
