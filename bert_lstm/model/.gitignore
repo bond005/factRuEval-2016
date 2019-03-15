@@ -1,0 +1,4 @@
+*.h5py
+*.json
+!lstm.*
+!crf.*
