@@ -27,7 +27,7 @@ from bert.modeling import BertModel, BertConfig, get_assignment_map_from_checkpo
 
 
 logging.basicConfig(level=logging.INFO)
-factrueval_logger = logging.getLogger('elmo_lstm')
+factrueval_logger = logging.getLogger('bert_lstm')
 
 
 NAMED_ENTITIES = ['O', 'B-ORG', 'I-ORG', 'B-PER', 'I-PER', 'B-LOC', 'I-LOC']
@@ -354,7 +354,7 @@ def texts_to_X(texts: List[List[str]], max_sentence_length: int, data_name: str,
                     for word_idx, cur_word in enumerate(cur_text):
                         bert_tokens = tokenizer.tokenize(cur_word)
                         new_text += bert_tokens
-                        new_bert2tokens += [(start_pos + 1, start_pos + len(bert_tokens) + 1)]
+                        new_bert2tokens.append((start_pos + 1, start_pos + len(bert_tokens) + 1))
                         start_pos += len(bert_tokens)
                     if len(new_text) > (max_seq_length_for_bert - 2):
                         new_text = new_text[:(max_seq_length_for_bert - 2)]
@@ -379,7 +379,7 @@ def texts_to_X(texts: List[List[str]], max_sentence_length: int, data_name: str,
                     for idx in range(end_pos - start_pos):
                         text_idx = start_pos + idx
                         for token_idx in range(min(len(texts[text_idx]), max_sentence_length)):
-                            token_start, token_end = bert2tokens[text_idx]
+                            token_start, token_end = bert2tokens[text_idx][token_idx]
                             X[text_idx][token_idx] = embeddings_of_texts_as_numpy[idx][token_start:token_end].max(
                                 axis=0)
                     del embeddings_of_texts_as_numpy
