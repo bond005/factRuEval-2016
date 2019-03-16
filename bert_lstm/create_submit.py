@@ -380,7 +380,7 @@ def texts_to_X(texts: List[List[str]], max_sentence_length: int, data_name: str,
                         text_idx = start_pos + idx
                         for token_idx in range(min(len(texts[text_idx]), max_sentence_length)):
                             token_start, token_end = bert2tokens[text_idx][token_idx]
-                            X[text_idx][token_idx] = embeddings_of_texts_as_numpy[idx][token_start:token_end].max(
+                            X[text_idx][token_idx] = embeddings_of_texts_as_numpy[idx][token_start:token_end].mean(
                                 axis=0)
                     del embeddings_of_texts_as_numpy
                 for k in list(sess.graph.get_all_collection_keys()):
